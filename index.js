@@ -23,6 +23,7 @@ for (const folder of commandFolders) {
 		if ('data' in command && 'execute' in command) {
 			client.commands.set(command.data.name, command);
 			commands.push(command.data.toJSON()); // Add for registration
+			console.log(`Loaded command: ${command.data.name}`);
 		} else {
 			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 		}
