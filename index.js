@@ -49,8 +49,6 @@ const rest = new REST({ version: '10' }).setToken(token);
 })();
 
 
-
-
 // -----------------------------
 // Event handlers
 // -----------------------------
@@ -65,6 +63,12 @@ client.on(Events.InteractionCreate, async interaction => {
 
 	if (!command) {
 		console.error(`No command matching ${interaction.commandName} was found.`);
+		return;
+	}
+
+	const channel = client.channels.cache.get("1411047672550260736");
+	if (!channel) {
+		console.error(`No such channel ${channel} was found`);
 		return;
 	}
 
