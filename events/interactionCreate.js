@@ -1,16 +1,36 @@
 const { Events, MessageFlags } = require('discord.js');
+const { buildMyModal } = require('../helpers/showmodal');
 
 module.exports = {
 	name: Events.InteractionCreate,
 	async execute(interaction) {
-		if (!interaction.isChatInputCommand()) return;
+        // ---------- BUTTON CLICK ----------
+        if (interaction.isButton() && interaction.customId === 'openmodal') {
+            const modal = buildMyModal(interaction.user.id);
+            await interaction.showModal(modal);
+        }
 
-		const command = interaction.client.commands.get(interaction.commandName);
+        // ---------- MODAL SUBMIT ----------
+        if (interaction.isModalSubmit() && interaction.customId.startsWith('MyModal-')) {
+            const first = interaction.fields.getTextInputValue('firstInput');
+            const second = interaction.fields.getTextInputValue('secondInput');
 
-		if (!command) {
-			console.error(`No command matching ${interaction.commandName} was found.`);
-			return;
-		}
+            await interaction.reply({
+                content: `✅ Modal Submitted.\nFirst: ${first}\nSecond: ${second}`,
+                ephemeral: true,
+            });
+            return;
+        }
+
+        // ---------- SLASH COMMAND ----------
+        if (!interaction.isChatInputCommand()) return;
+
+        const command = interaction.client.commands.get(interaction.commandName);
+
+        if (!command) {
+            console.error(`No command matching ${interaction.commandName} was found.`);
+            return;
+        }
 
 		try {
 			await command.execute(interaction);
