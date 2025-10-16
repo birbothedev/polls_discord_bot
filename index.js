@@ -53,6 +53,8 @@ const rest = new REST({ version: '10' }).setToken(token);
 // -----------------------------
 const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+console.log("Event files found:", eventFiles);
+
 
 for (const file of eventFiles) {
 	const filePath = path.join(eventsPath, file);
@@ -63,36 +65,5 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args, client));
 	}
 }
-
-// -----------------------------
-// Event handlers
-// -----------------------------
-client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return;
-
-	const command = client.commands.get(interaction.commandName);
-
-	if (!command) {
-		console.error(`No command matching ${interaction.commandName} was found.`);
-		return;
-	}
-
-	const channel = client.channels.cache.get("1411047672550260736");
-	if (!channel) {
-		console.error(`No such channel ${channel} was found`);
-		return;
-	}
-
-	try {
-		await command.execute(interaction);
-	} catch (error) {
-		console.error(error);
-		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
-		} else {
-			await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
-		}
-	}
-});
 
 client.login(token);

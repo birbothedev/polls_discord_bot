@@ -1,25 +1,26 @@
-const { Events, MessageFlags } = require('discord.js');
-const { buildMyModal } = require('../helpers/showmodal');
+const { Events, MessageFlags, EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	name: Events.InteractionCreate,
 	async execute(interaction) {
-        // ---------- BUTTON CLICK ----------
-        if (interaction.isButton() && interaction.customId === 'openmodal') {
-            const modal = buildMyModal(interaction.user.id);
-            await interaction.showModal(modal);
-        }
 
         // ---------- MODAL SUBMIT ----------
-        if (interaction.isModalSubmit() && interaction.customId.startsWith('MyModal-')) {
-            const first = interaction.fields.getTextInputValue('firstInput');
-            const second = interaction.fields.getTextInputValue('secondInput');
+        if (interaction.isModalSubmit() && interaction.customId === 'pollModal') {
+            const username = interaction.user.username;
+            const selectedValues = interaction.fields.getStringSelectValues('channel-select-menu'); 
+            const string = selectedValues[0] || 'None'; 
+            const pollTitle = interaction.fields.getTextInputValue('title-text-input')
 
-            await interaction.reply({
-                content: `✅ Modal Submitted.\nFirst: ${first}\nSecond: ${second}`,
-                ephemeral: true,
-            });
-            return;
+            const embed = new EmbedBuilder()
+            .setTitle(`${pollTitle}`)
+                .addFields(
+                    { name: 'First Input', value: string }
+                )
+                .setDescription(`Poll Created By **${username}**`)
+                .setFooter({text: `time remaining on poll: `})
+                .setColor(0x00FF00);
+
+            await interaction.reply({ embeds: [embed], Ephemeral: false });
         }
 
         // ---------- SLASH COMMAND ----------

@@ -1,5 +1,5 @@
 
-const { Events, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
+const { Events } = require('discord.js');
 
 module.exports = {
 	name: Events.ClientReady,
@@ -13,16 +13,5 @@ module.exports = {
 		console.log("Channel ID:", channelId);
 		console.log("Channel object:", channel?.id || "not found");
 
-		const button = new ButtonBuilder()
-			.setCustomId('openmodal0')
-			.setLabel('Create Poll')
-			.setStyle(ButtonStyle.Primary);
-
-		const row = new ActionRowBuilder().addComponents(button);
-
-		await channel.send({
-			content: 'Click the Button below to Create a Poll!',
-			components: [row],
-		})
 	},
 };
